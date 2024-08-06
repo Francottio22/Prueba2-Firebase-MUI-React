@@ -1,4 +1,4 @@
-// store/tasks/tasksSlice.js
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from 'firebase/firestore/lite';
 import { FirebaseDB } from '../../firebase/config';
