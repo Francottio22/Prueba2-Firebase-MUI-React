@@ -1,24 +1,19 @@
+// components/TaskList.js
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTasks, addTask, deleteTask, toggleTaskComplete } from '../../store/tasks/tasksSlice';
-import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, TextField } from '@mui/material';
+import { fetchTasks, deleteTask, toggleTaskComplete } from '../../store/tasks/tasksSlice';
+import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox , ButtonGroup,Box, IconButton} from '@mui/material';
+import AccessibleForwardIcon from '@mui/icons-material/AccessibleForward';
 
 
 export const TaskList = () => {
   const dispatch = useDispatch();
   const { tasks, isLoading } = useSelector((state) => state.tasks);
-  const [input, setInput] = useState('');
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
     dispatch(fetchTasks());
   }, [dispatch]);
-
-  const handleAddTask = (e) => {
-    e.preventDefault();
-    if (input.trim().length === 0) return;
-    dispatch(addTask({ text: input, completed: false }));
-    setInput('');
-  };
 
   const handleDelete = (taskId) => {
     dispatch(deleteTask(taskId));
@@ -28,39 +23,50 @@ export const TaskList = () => {
     dispatch(toggleTaskComplete(task));
   };
 
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+  };
+
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'completed') return task.completed;
+    if (filter === 'incomplete') return !task.completed;
+    return true; // Traer todas las tareas
+  });
+
   if (isLoading) {
     return <p>Loading...</p>;
   }
 
   return (
-    
     <>
-      <form onSubmit={handleAddTask}>
-        <TextField
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          label="Add a Task"
-          fullWidth
-
-        />
-
-        <Button type="submit" variant="contained" color="primary" style={{marginTop: '16px'}}>
-          Add Task
-        </Button>
-      </form>
+    <Box sx={{display:'flex', flexDirection: 'column', alignItems:'center'}}>
+      <ButtonGroup size="large" aria-label="Large button group" style={{ marginBottom: '16px' }}>
+        <Button onClick={() => handleFilterChange('all')} color={filter === 'all' ? 'primary' : 'secondary'}>All</Button>
+        <Button onClick={() => handleFilterChange('completed')} color={filter === 'completed' ? 'primary' : 'secondary'}>Completed</Button>
+        <Button onClick={() => handleFilterChange('incomplete')} color={filter === 'incomplete' ? 'primary' : 'secondary'}>Incomplete</Button>
+      </ButtonGroup>
+      </Box>
 
       <List>
-        {tasks.map((task) => (
-          <ListItem key={task.id} dense button onClick={() => handleToggleComplete(task)}>
-            <ListItemText primary={task.text} secondary={`Completed: ${task.completed}`} />
+        {filteredTasks.map((task) => (
+          <ListItem key={task.id} dense>
+            <Checkbox
+              checked={task.completed}
+              onChange={() => handleToggleComplete(task)}
+              color="success"
+            />
+            <ListItemText 
+              primary={task.name} 
+              secondary={`Description: ${task.description}`}
+            />
             <ListItemSecondaryAction>
-              <Button variant="contained" color="primary" onClick={() => handleDelete(task.id)}>
-                Delete
-              </Button>
+            <IconButton edge="end" color="error" onClick={() => handleDelete(task.id)}>
+              <AccessibleForwardIcon />
+            </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
         ))}
       </List>
-      </>
+    </>
   );
 };

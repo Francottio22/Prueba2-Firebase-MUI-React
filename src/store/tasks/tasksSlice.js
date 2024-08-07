@@ -25,14 +25,14 @@ export const deleteTask = createAsyncThunk('tasks/deleteTask', async (taskId) =>
   return taskId;
 });
 
-// Update task completion status in Firestore
+// Actualización del estado de completado en Firestore
 export const toggleTaskComplete = createAsyncThunk('tasks/toggleTaskComplete', async (task) => {
   const taskDoc = doc(FirebaseDB, `todos/${task.id}`);
   await updateDoc(taskDoc, { completed: !task.completed });
-  return task;
+  return { id: task.id, completed: !task.completed };
 });
 
-// Slice for managing tasks
+// Slice para gestionar las tareas
 export const tasksSlice = createSlice({
   name: 'tasks',
   initialState: {
