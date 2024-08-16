@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTasks, deleteTask, toggleTaskComplete } from '../../store/tasks/tasksSlice';
 import { Button, List, ListItem, ListItemText, ListItemSecondaryAction, Checkbox , ButtonGroup,Box, IconButton} from '@mui/material';
-import AccessibleForwardIcon from '@mui/icons-material/AccessibleForward';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export const TaskList = () => {
   const dispatch = useDispatch();
@@ -61,7 +60,7 @@ export const TaskList = () => {
             />
             <ListItemSecondaryAction>
             <IconButton edge="end" color="error" onClick={() => handleDelete(task.id)}>
-              <AccessibleForwardIcon />
+              <DeleteIcon />
             </IconButton>
             </ListItemSecondaryAction>
           </ListItem>
